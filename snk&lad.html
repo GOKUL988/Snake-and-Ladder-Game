@@ -1,0 +1,255 @@
+<html>
+    <head>
+        <title>Snake and Ladder</title>
+        <style>
+            body{
+                background: linear-gradient(to right,#000428,#004e92,gray);
+            }
+            .pagecont {
+                display: flex;
+            }
+            .left {
+                flex: 25%;
+                max-width: 130vh;
+                height:120%;
+                margin: 0.2cm; 
+                background-color:aliceblue;
+                position: relative;
+            }
+            .right {
+                flex: 25%;
+                border-radius: 20px;
+                margin: 0.2cm;
+                height: 100%;
+                background-color: transparent; 
+                color: antiquewhite;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; 
+                font-size: large;
+                
+            }
+            .fitcont{
+                border: 1px solid; 
+                width: 75%; 
+                padding-left: 170px;
+                height:6cm;
+                word-wrap: break-word;
+                white-space: pre-wrap; 
+                max-width: 100%; 
+                overflow-y: auto;
+                overflow-x: auto;
+                font-size: large;
+                background-color: transparent; 
+                color: antiquewhite;
+                border: none;
+                margin-top: 2cm;
+            }
+            .fitcon2{
+                max-height: 5cm;
+                word-wrap: break-word; 
+                overflow-wrap: break-word; 
+                overflow-y: auto;
+                font-size: medium;
+                background-color: transparent; 
+                color: antiquewhite;
+                border: none;
+            }
+            .but1{
+                background-color:lightgreen ;
+                border: none; 
+                border-radius: 15px; 
+                font-size: large; 
+                padding: 8px;
+            }
+            .but1:hover{
+                background-color: green;
+            }
+            .but2{
+                background-color: red; 
+                color: bisque;
+                border: none; 
+                border-radius: 15px; 
+                font-size: large; 
+                
+                padding: 8px;
+            }
+            .but2:hover{
+                background-color: maroon; 
+                color: wheat;
+            }
+            input{
+                font-size: medium; 
+                font-family: 'Courier New', Courier, monospace;
+                font-weight: bolder;
+            }
+            .coin{
+                position: absolute;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                text-align: center;
+                line-height: 40px;
+                font-weight: bold;
+                color: white;
+                font-size: 26px;
+            }
+            .coin-1 { background-color: maroon; }
+            .coin-2 { background-color: darkgoldenrod; }
+            .coin-3 { background-color: darkmagenta; }  
+            .coin-4 { background-color: darkolivegreen; }
+            .coin-5 { background-color: rgb(19, 19, 20); }
+            .coin-6 { background-color: darkslategrey }
+            .coin-7 { background-color: darkturquoise; }
+            .coin-8 { background-color: dimgray; }
+            .coin-9 { background-color: rgb(104, 104, 255); }
+            .coin-10 { background-color: rgb(255, 77, 255); }
+        </style>
+    </head>
+    <body>
+        <div class="pagecont">
+            <div class="left">
+            <img src="imgs\snakesladderedited1.jpg" alt="dice" width="100%" height="100%" >
+            <div id="coins"></div>
+            </div>
+            <div class="right">
+                <center>
+                <h4>Snake and Ladder</h4> 
+                <p id="cntpl">Enter the count of players: <input id="main" type="number"></p> 
+                <button onclick="arr()" class="but1" id="srtbut">Start</button>
+                <div id="pointstable" style="display: none;">
+                    <p id="turn"></p>
+                    <button id="rotateBtn" onclick="rotate()" class="but2">Rotate</button>
+                    <p id="rotateValue"></p>
+                    <p id="totalValue"></p>
+                    <div class="fitcon2" >
+                        <p id="winn"></p>
+                    </div>
+                    <button id="showrolls" onclick="showrolls()" class="but2">PLayer's Rolls</button>
+                </div>
+                <div class="fitcon2">
+                    <center>
+                    <p id="winn" style="padding: 2px;"></p>
+                    </center>
+                </div>
+                <p class="fitcon2" id="winn"></p>
+                </center>
+            </div>
+        </div>
+        <div  id="rotate" style="display: none;" class="fitcont" >
+            <p id="arr"></p>
+        </div>
+    </body>
+    <script>
+        let players = [];
+        let li = [];
+        let currentPlayer = 0; 
+        let tot = ""; 
+        let wins = ""; 
+        let winsplayer = ""; 
+        const boardSize = 10;
+        let j = 0;
+
+        function arr() {
+            const playCount = document.getElementById("main").value; 
+            document.getElementById("srtbut").style.display='none';
+            document.getElementById("cntpl").style.display='none';
+            players = [];
+            li = [];
+            currentPlayer = 0; 
+
+            for (let i = 0; i < playCount; i++) {
+                li.push([]); 
+                players.push({ id: i + 1, points: 0, currentRoll: 0 });
+            }
+            nextTurn();
+            document.getElementById("pointstable").style.display = 'block';
+            //document.getElementById("rotate").style.display = 'block';
+        }
+
+        function dice() {
+            return Math.floor(Math.random() * 6) + 1;
+        }
+
+        function snakeOrLadder(tot) {
+            const snakes = {17: 7, 54: 34, 64: 60, 62: 19, 87: 24, 93: 73, 95: 75, 98: 79};
+            const ladders = {1: 38, 4: 14, 9: 31, 28: 84, 21: 42, 51: 67, 80: 100, 71: 91};
+            if (snakes[tot]) {
+                return snakes[tot];
+            } else if (ladders[tot]) {
+                return ladders[tot];
+            }
+            return tot;
+        }
+
+        function rotate() {
+            const player = players[currentPlayer]; 
+            const rollval = dice();
+            player.currentRoll = rollval;
+            player.points += rollval;
+            tot = snakeOrLadder(player.points); 
+
+            if (tot > 100) {
+                tot = player.points - rollval;    
+            } else if (tot == 100) {
+                j++;
+                winsplayer += `<h3>${j}. Player ${player.id} wins the game!</h3>`;
+                sto(); 
+            }
+            
+            player.points = tot; 
+            li[currentPlayer].push(tot); 
+            document.getElementById("rotateValue").innerHTML = `Player ${player.id}'s Rotate Value: <h4>${player.currentRoll}</h4>`;
+            document.getElementById("totalValue").innerHTML = `Total Points for Player ${player.id}: <h3>${tot}</h3>`;
+            document.getElementById("arr").innerText = "Player's rolls:" + JSON.stringify(li);
+            document.getElementById("winn").innerHTML = winsplayer;
+            
+            updateCoins(); 
+            currentPlayer = (currentPlayer + 1) % players.length;
+            nextTurn(); 
+        }
+
+        function nextTurn() {
+            const player = players[currentPlayer];
+            document.getElementById("turn").innerHTML = `It's Player ${player.id}'s turn`;
+        }
+
+        function sto() {
+            if (j === players.length) {
+                document.getElementById("rotateBtn").disabled = true;
+            }
+        }
+
+        function updateCoins() {
+    const coinContainer = document.getElementById("coins");
+    coinContainer.innerHTML = '';
+
+    players.forEach((player, index) => {
+        const coin = document.createElement("div");
+        coin.className = `coin coin-${index + 1}`;
+        coin.textContent = player.id;
+
+        const pos = player.points;
+        if (pos > 0) {
+            //hint helps to calculte player pos
+            const row = Math.floor((pos - 1) / boardSize); // Row number (0-based)
+            const isEvenRow = row % 2 === 0; 
+            const col = isEvenRow ? (pos - 1) % boardSize : boardSize - 1 - (pos - 1) % boardSize;
+
+            // helps to player pos suitable on snk board size
+            const x = col * (document.querySelector('img').offsetWidth / boardSize);
+            const y = (boardSize - 1 - row) * (document.querySelector('img').offsetHeight / boardSize);
+
+            coin.style.left = `${x}px`;
+            coin.style.top = `${y}px`;
+        }
+
+        coinContainer.appendChild(coin);
+    });
+}
+
+function showrolls(){
+    document.getElementById("rotate").style.display='block'; 
+    document.getElementById("showrolls").style.display='none';
+
+}
+    </script>
+</html>
