@@ -22,4 +22,11 @@
    cd Snake-and-Ladder-Game
    ```
 
-   ## 
+## Sample Images 
+![sam1](imgs\str1.png) 
+##
+![sam2](imgs\str2.png) 
+##
+![sam3](imgs\str3.png)
+## 
+![sam4](imgs\str4.png) 
